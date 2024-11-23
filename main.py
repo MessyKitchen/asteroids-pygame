@@ -2,6 +2,13 @@ import pygame
 from constants import *
 from player import Player
 
+# Create a group to manage all game objects that require updating each frame.
+updatable = pygame.sprite.Group()
+# Create a group to manage all game objects that need to be drawn to the screen.
+drawable = pygame.sprite.Group() 
+# Assign the Player class's containers attribute to the updatable and drawable groups.
+# This ensures all Player instances are automatically added to both groups upon creation.
+Player.containers = (updatable, drawable)
 
 def main():
     # Initialize all imported Pygame modules
@@ -35,8 +42,11 @@ def main():
         # Fill the screen with black to clear the previous frame
         screen.fill((0, 0, 0))
 
-        # Render the player onto the screen in its current state
-        player.draw(screen)
+        for object in updatable: # Iterate over all objects in the 'updatable' group and update their states based on the delta time (dt).
+            object.update(dt)
+        
+        for sprite in drawable: # Iterate over all sprites in the 'drawable' group and draw them onto the screen.
+            sprite.draw(screen)
 
         # Update the entire display
         pygame.display.update()
