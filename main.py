@@ -1,9 +1,14 @@
 import pygame
 from constants import *
+from player import Player
+
 
 def main():
     # Initialize all imported Pygame modules
     pygame.init()
+    
+    # Instantiate the Player object at the center of the screen 
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     
     # Set up the drawing window with predefined dimensions
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -29,6 +34,10 @@ def main():
         
         # Fill the screen with black to clear the previous frame
         screen.fill((0, 0, 0))
+
+        # Render the player onto the screen in its current state
+        player.draw(screen)
+
         # Update the entire display
         pygame.display.update()
         
