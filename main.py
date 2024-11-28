@@ -1,6 +1,8 @@
 import pygame
 from constants import *
 from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
 
 # Create a group to manage all game objects that require updating each frame.
 updatable = pygame.sprite.Group()
@@ -8,7 +10,12 @@ updatable = pygame.sprite.Group()
 drawable = pygame.sprite.Group() 
 # Assign the Player class's containers attribute to the updatable and drawable groups.
 # This ensures all Player instances are automatically added to both groups upon creation.
+asteroids = pygame.sprite.Group()
+# Create a group specifically for managing all Asteroid objects.
+
 Player.containers = (updatable, drawable)
+Asteroid.containers = (asteroids, updatable, drawable)
+AsteroidField.containers = (updatable,)
 
 def main():
     # Initialize all imported Pygame modules
@@ -16,6 +23,8 @@ def main():
     
     # Instantiate the Player object at the center of the screen 
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    # Instantiate an instance of AsteroidField to handle all asteroid spawning and updates
+    asteroid_field = AsteroidField()
     
     # Set up the drawing window with predefined dimensions
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
