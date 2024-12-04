@@ -1,8 +1,10 @@
 import pygame
+import sys
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+
 
 # Create a group to manage all game objects that require updating each frame.
 updatable = pygame.sprite.Group()
@@ -33,7 +35,7 @@ def main():
     print("Starting asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
-    
+
 
     # Intialise timing variables for framerate control
     # dt (delta time)
@@ -54,9 +56,14 @@ def main():
         for object in updatable: # Iterate over all objects in the 'updatable' group and update their states based on the delta time (dt).
             object.update(dt)
         
+        for asteroid in asteroids:
+            if player.collides_with(asteroid):
+                print("Game over!")
+                sys.exit()
+
         for sprite in drawable: # Iterate over all sprites in the 'drawable' group and draw them onto the screen.
             sprite.draw(screen)
-
+  
         # Update the entire display
         pygame.display.update()
         
