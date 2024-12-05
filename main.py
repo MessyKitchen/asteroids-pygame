@@ -4,7 +4,7 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
-
+from shot import Shot
 
 # Create a group to manage all game objects that require updating each frame.
 updatable = pygame.sprite.Group()
@@ -14,10 +14,12 @@ drawable = pygame.sprite.Group()
 # This ensures all Player instances are automatically added to both groups upon creation.
 asteroids = pygame.sprite.Group()
 # Create a group specifically for managing all Asteroid objects.
+shots = pygame.sprite.Group()
 
 Player.containers = (updatable, drawable)
 Asteroid.containers = (asteroids, updatable, drawable)
 AsteroidField.containers = (updatable,)
+Shot.containers = (shots, updatable, drawable)
 
 def main():
     # Initialize all imported Pygame modules
@@ -56,10 +58,18 @@ def main():
         for object in updatable: # Iterate over all objects in the 'updatable' group and update their states based on the delta time (dt).
             object.update(dt)
         
+        # Logic for Player / Asteroid collisions
         for asteroid in asteroids:
             if player.collides_with(asteroid):
                 print("Game over!")
                 sys.exit()
+
+        # Logic for SHOOT / Asteroid collisions
+        for shot in shots:
+            for asteroid in asteroids:
+                if asteroid.collides_with(shot):
+                    asteroid.split()
+                    shot.kill()
 
         for sprite in drawable: # Iterate over all sprites in the 'drawable' group and draw them onto the screen.
             sprite.draw(screen)

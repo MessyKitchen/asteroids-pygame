@@ -1,6 +1,7 @@
 from circleshape import CircleShape
 import pygame
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN
+from shot import Shot
 
 class Player(CircleShape):
     
@@ -8,6 +9,7 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shot_cooldown = 0
         
     # Calculate the points for a triangle representing the player's ship.
     def triangle(self):
@@ -28,8 +30,25 @@ class Player(CircleShape):
         # Update the player's rotation based on their turn speed and the time passed
         self.rotation += PLAYER_TURN_SPEED * dt
 
+    def move(self, dt):
+        # Modify the player's position.
+        # We start with a unit vector pointing straight up from (0, 0) to (0, 1).
+        # We rotate that vector by the player's rotation, so it's pointing in the direction the player is facing.
+        # We multiply by PLAYER_SPEED * dt. A larger vector means faster movement.
+        # Add the vector to our position to move the player.
+        forward = pygame.Vector2(0, 1).rotate(self.rotation)
+        self.position += forward * PLAYER_SPEED * dt
+
+    def shoot(self):
+        if self.shot_cooldown > 0:
+            return
+        self.shot_cooldown = PLAYER_SHOOT_COOLDOWN
+        shot = Shot(self.position.x, self.position.y)
+        shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
     
     def update(self, dt):
+        self.shot_cooldown -= dt
+        
         # Get the current state of all keyboard keys
         keys = pygame.key.get_pressed()
 
@@ -47,13 +66,7 @@ class Player(CircleShape):
             self.move(dt)
 
         if keys[pygame.K_s]:
-            self.move(-dt)    
+            self.move(-dt)
 
-    def move(self, dt):
-        # Modify the player's position.
-        # We start with a unit vector pointing straight up from (0, 0) to (0, 1).
-        # We rotate that vector by the player's rotation, so it's pointing in the direction the player is facing.
-        # We multiply by PLAYER_SPEED * dt. A larger vector means faster movement.
-        # Add the vector to our position to move the player.
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        if keys[pygame.K_SPACE]:
+            self.shoot()  
