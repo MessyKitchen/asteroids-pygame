@@ -38,6 +38,10 @@ def main():
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
 
+    # Initiating score-board and score-board font
+    score = 0
+    font = pygame.font.SysFont("OCR A Extended", 28)
+
 
     # Intialise timing variables for framerate control
     # dt (delta time)
@@ -62,6 +66,7 @@ def main():
         for asteroid in asteroids:
             if player.collides_with(asteroid):
                 print("Game over!")
+                print(f"Score:{score}")
                 sys.exit()
 
         # Logic for SHOOT / Asteroid collisions
@@ -70,10 +75,15 @@ def main():
                 if asteroid.collides_with(shot):
                     asteroid.split()
                     shot.kill()
+                    score += 75
 
         for sprite in drawable: # Iterate over all sprites in the 'drawable' group and draw them onto the screen.
             sprite.draw(screen)
-  
+
+        # Render and display the score
+        score_text = font.render(f"Score: {score}", True, (0, 255, 0))  # white color
+        screen.blit(score_text, (10, 10))  # top-left corner
+
         # Update the entire display
         pygame.display.update()
         
@@ -83,3 +93,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Added 'score-board', new colour scheme, player stays within screen and score print to console.
